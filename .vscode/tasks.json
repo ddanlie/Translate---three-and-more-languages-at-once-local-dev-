@@ -1,0 +1,110 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "translator: dev",
+      "type": "shell", 
+      "command": "cmd.exe /c 'host_translator.bat' ",
+      "options": {
+        "cwd": "${workspaceFolder}/backend/default/threetranslate/services/ai_translation"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "llama-server",
+        "pattern": {
+          "regexp": "^(?<message>(?!x)x)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "build:|main:|system_info:",
+          "endsPattern": "server is listening on|all slots are idle|error"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev",
+        "clear": true
+      },
+      "icon": {
+        "id": "beaker",
+        "color": "terminal.ansiMagenta"
+      }
+    },
+    {
+      "label": "backend: dev",
+      "type": "shell",
+      "command": "uv run python manage.py runserver --settings \"config.settings.development\"",
+      "options": {
+        "cwd": "${workspaceFolder}/backend/default"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "django",
+        "pattern": {
+          "regexp": "^(?<message>(?!x)x)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Performing system checks|Watching for file changes",
+          "endsPattern": "Starting development server at|Quit the server with"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev",
+        "clear": true
+      },
+      "icon": {
+        "id": "server-process",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "frontend: dev",
+      "type": "shell",
+      "command": "npm run dev -- --host 0.0.0.0",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^(?<message>(?!x)x)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE v",
+          "endsPattern": "Local:\\s+http"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev",
+        "clear": true
+      },
+      "icon": {
+        "id": "browser",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "dev",
+      "dependsOn": ["translator: dev", "backend: dev", "frontend: dev"],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev"
+      }
+    }
+  ]
+}

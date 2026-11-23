@@ -1,0 +1,17 @@
+python manage.py check --settings "config.settings.development"
+python manage.py makemigrations <target app> --settings "config.settings.development"
+python manage.py migrate --settings "config.settings.development" --check / --plan
+python manage.py showmigrations
+python manage.py runserver --settings "config.settings.development"
+python manage.py test
+python manage.py createsuperuser
+python manage.py collectstatic
+python manage.py shell
+
+
+Migrations rollback preview and action
+Preivew:
+python manage.py migrate users zero --plan --settings=config.settings.development    
+
+Action:
+python manage.py migrate users zero --settings=config.settings.development
