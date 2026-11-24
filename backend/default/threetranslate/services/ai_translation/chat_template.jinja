@@ -594,52 +594,37 @@
         {%- if message['content'] is none or message['content'] is not string -%}
             {{ raise_exception("Assistant role must provide content as a string") }}
         {%- endif -%}
-        {{ '<start_of_turn>model\n'}}
-        {{ message["content"] | trim }}
+        {{ '<｜hy_Assistant｜>' + message["content"] | trim + '<｜hy_place▁holder▁no▁2｜>' }}
     {%- elif (message['role'] == 'user') -%}
-        {%- if message['content'] is none or message['content'] is not iterable or message['content'] | length != 1 -%}
+        {#- Accept both a plain string and the typed content-part list used by the API. -#}
+        {%- if message['content'] is string -%}
+            {%- set content = {'type': 'text', 'text': message['content']} -%}
+        {%- elif message['content'] is iterable and message['content'] | length == 1 -%}
+            {%- set content = message['content'][0] -%}
+        {%- else -%}
             {{ raise_exception(
-                "User role must provide `content` as an iterable with exactly one item. That item must be a " +
-                "`mapping(type:'text' | 'image', source_lang_code:string, target_lang_code:string, " +
-                "text:string | none, image:string | none)`."
+                "User role must provide `content` as a string or an iterable with exactly one item. That item " +
+                "must be a `mapping(type:'text', target_lang_code:string, text:string)`."
             ) }}
         {%- endif -%}
-        {%- set content = message["content"][0] -%}
-        {#- llama.cpp drops unknown keys from content parts, so the language codes may arrive
-            as top-level chat_template_kwargs instead; prefer those when present. -#}
-        {%- set source_lang_code = (source_lang_code if source_lang_code is defined
-                                    else content.get("source_lang_code")) | replace("_", "-") -%}
-        {%- set source_lang = languages[source_lang_code] -%}
+        {#- llama.cpp drops unknown keys from content parts, so the language code may arrive
+            as a top-level chat_template_kwargs instead; prefer that when present. -#}
         {%- set target_lang_code = (target_lang_code if target_lang_code is defined
                                     else content.get("target_lang_code")) | replace("_", "-") -%}
         {%- set target_lang = languages[target_lang_code] -%}
-        {{ '<start_of_turn>user\nYou are a professional ' + source_lang + ' (' + source_lang_code + ') to ' +
-           target_lang + ' (' + target_lang_code + ') translator. Your goal is to accurately convey the meaning and '
-           'nuances of the original ' + source_lang + ' text while adhering to ' + target_lang + ' grammar, '
-           'vocabulary, and cultural sensitivities.\n'
-        }}
+        {{ '<｜hy_User｜>' }}
         {%- if content["type"] == 'text' -%}
             {{
-                'Produce only the ' + target_lang + ' translation, without any additional explanations or ' +
-                'commentary. Please translate the following ' + source_lang + ' text into ' + target_lang + ':\n\n\n' +
-                content["text"] | trim
-            }}
-        {%- elif content["type"] == 'image' -%}
-            {{
-                'Please translate the ' + source_lang + ' text in the provided image into ' + target_lang + '. ' +
-                'Produce only the ' + target_lang + ' translation, without any additional explanations, ' +
-                'alternatives or commentary. Focus only on the text, do not output where the text is located, ' +
-                'surrounding objects or any other explanation about the picture. Ignore symbols, pictogram, and ' +
-                'arrows!\n\n\n<start_of_image>'
+                'Translate the following text into ' + target_lang + '. Note that you should only output the ' +
+                'translated result without any additional explanation:\n\n' + content["text"] | trim
             }}
         {%- else -%}
-            {{ raise_exception("User role `content` can contain either `text` or `image` data.") }}
+            {{ raise_exception("User role `content` can only contain `text` data.") }}
         {%- endif -%}
     {%- else -%}
         {{ raise_exception("Conversations must only contain user or assistant roles.") }}
     {%- endif -%}
-    {{ '<end_of_turn>\n' }}
 {%- endfor -%}
 {%- if add_generation_prompt -%}
-    {{'<start_of_turn>model\n'}}
+    {{ '<｜hy_Assistant｜>' }}
 {%- endif -%}

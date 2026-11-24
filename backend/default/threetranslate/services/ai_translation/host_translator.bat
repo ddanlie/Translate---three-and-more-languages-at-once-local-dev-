@@ -1,4 +1,6 @@
-llamacpp-server\llama-server.exe -m translategemma-12b-it.i1-Q4_K_M.gguf ^
+llamacpp-server\llama-server.exe -m Hy-MT3-1.8B-Q8_0.gguf ^
+-c 8192 ^
+--parallel 5 ^
 --host 127.0.0.1 ^
 --port 8080 ^
 -ngl 0 ^
