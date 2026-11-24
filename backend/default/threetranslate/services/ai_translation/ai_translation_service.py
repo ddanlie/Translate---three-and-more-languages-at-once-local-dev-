@@ -4,6 +4,10 @@ from abc import ABC, abstractmethod
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
+from pathlib import Path
+
+from babel import Locale
+from jinja2 import Environment, nodes
 import requests
 
 
@@ -30,6 +34,57 @@ class LlamacppTranslator(Translator):
     # One request per target language runs concurrently; extra languages queue up.
     MAX_WORKERS = 5
     _executor = ThreadPoolExecutor(max_workers=MAX_WORKERS, thread_name_prefix="llamacpp-translate")
+
+    CHAT_TEMPLATE = Path(__file__).with_name("chat_template.jinja")
+
+    @staticmethod
+    def _parse_supported_languages(template_path: Path = CHAT_TEMPLATE) -> dict[str, str]:
+        """Read the ``languages`` mapping out of the chat template.
+
+        The template is parsed as Jinja (not regex-matched), so any language added to
+        its ``{% set languages = {...} %}`` block is picked up automatically. Codes with
+        subtags get them spelled out in brackets, e.g. ``da-GL`` -> ``Danish (Greenland)``;
+        bare codes stay plain, e.g. ``cs`` -> ``Czech``.
+        """
+        source = Path(template_path).read_text(encoding="utf-8")
+        tree = Environment().parse(source)
+
+        languages = {}
+        for assignment in tree.find_all(nodes.Assign):
+            if not isinstance(assignment.target, nodes.Name) or assignment.target.name != "languages":
+                continue
+            if not isinstance(assignment.node, nodes.Dict):
+                continue
+            for pair in assignment.node.items:
+                if isinstance(pair.key, nodes.Const) and isinstance(pair.value, nodes.Const):
+                    languages[pair.key.value] = pair.value.value
+
+        english = Locale("en")
+        supported = {}
+        for code, name in languages.items():
+            subtags = code.split("-")[1:]
+            if not subtags:
+                supported[code] = name
+                continue
+            labels = []
+            for subtag in subtags:
+                if len(subtag) == 4 and subtag[0].isupper():
+                    label = english.scripts.get(subtag)
+                elif len(subtag) == 2 and subtag.isupper():
+                    label = english.territories.get(subtag)
+                else:
+                    label = english.variants.get(subtag)
+                # Variants (e.g. "tarask") have no CLDR name; title-case them for display.
+                labels.append(label or (subtag.title() if len(subtag) > 3 else subtag))
+            supported[code] = f"{name} ({', '.join(labels)})"
+
+        return supported
+
+    SUPPORTED_LANGUAGES = _parse_supported_languages()
+
+    def get_supported_languages(self) -> dict[str, str]:
+        """Return the language tags the chat template accepts, mapped to display names."""
+        return self.SUPPORTED_LANGUAGES
 
     def __init__(self, model_name=None, max_tokens=4096, enable_thinking=False):
         self.model_name = model_name or LlamacppTranslator.DEFAULT_MODEL

@@ -1,0 +1,14 @@
+Here is how you can name your service
+
+For default CRUD do not use services - use simple functions from 
+src/services/utils/axios_api_utils.ts
+
+Template:
+
+service_<service-group>_<specific-behavior>_<sync/async>_<additional-info>
+
+Examples:
+
+- service_catalog_only-available-items_async_behavior-is-not-written-here
+
+- service_user_make-score-zero_sync_this-is-repeating-task-not-general-crud-operation
