@@ -10,15 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+
+import os
+import sys
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
-# Custom environment
-import os
-from dotenv import load_dotenv
-load_dotenv(BASE_DIR / ".env")
+from general_utils.general_utils import load_env_settings
+load_env_settings(globals())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "false").lower() == "true"
@@ -38,6 +40,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "users", # my custom users app defining user model 
     "rest_framework",
+    "drf_spectacular", # documentation generator
     # "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -82,7 +85,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "config" / "db.sqlite3",
     }
 }
 
@@ -165,6 +168,8 @@ REST_FRAMEWORK = {
         "anon": "1/3s",
         "user": "1/3s",
     },
+    # drf-spectacular settings for OpenAPI schema generation
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     # "PAGE_SIZE": 10,
 }

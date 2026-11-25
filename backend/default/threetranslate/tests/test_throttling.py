@@ -2,7 +2,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.test import SimpleTestCase
 from rest_framework.test import APIRequestFactory
 
-from default.config.throttling import AnonRateThrottle, UserRateThrottle
+from config.throttling import AnonRateThrottle, UserRateThrottle
 
 
 class _FixedRateUserThrottle(UserRateThrottle):

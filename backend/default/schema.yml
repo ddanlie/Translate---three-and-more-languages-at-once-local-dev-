@@ -1,0 +1,162 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/translate/ai_translate:
+    post:
+      operationId: ai_translate
+      description: Translates text into multiple target languages.
+      summary: Translate text using AI
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AITranslateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AITranslateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AITranslateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+          description: ''
+  /api/translate/ai_translate{format}:
+    post:
+      operationId: ai_translate_2
+      description: Translates text into multiple target languages.
+      summary: Translate text using AI
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AITranslateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AITranslateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AITranslateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+          description: ''
+  /api/translate/ai_translate/supported_languages:
+    get:
+      operationId: supported_languages
+      description: Returns available language codes and their names.
+      summary: Get supported languages
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+          description: ''
+  /api/translate/ai_translate/supported_languages{format}:
+    get:
+      operationId: supported_languages_2
+      description: Returns available language codes and their names.
+      summary: Get supported languages
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+          description: ''
+components:
+  schemas:
+    AITranslateRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          maxLength: 1000
+          minLength: 1
+        source_language:
+          $ref: '#/components/schemas/SourceLanguageEnum'
+        target_languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/TargetLanguagesEnum'
+      required:
+      - source_language
+      - target_languages
+      - text
+    SourceLanguageEnum:
+      enum:
+      - en
+      type: string
+      description: '* `en` - en'
+    TargetLanguagesEnum:
+      enum:
+      - en
+      type: string
+      description: '* `en` - en'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
