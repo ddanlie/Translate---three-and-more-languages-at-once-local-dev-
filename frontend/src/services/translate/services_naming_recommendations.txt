@@ -5,7 +5,7 @@ src/services/utils/axios_api_utils.ts
 
 Template:
 
-service_<service-group>_<specific-behavior>_<sync/async>_<additional-info>
+service_<serviceGroup>_<specificBehavior>_<sync/async>_<additionalInfo>
 
 Examples:
 
