@@ -12,7 +12,7 @@ export default {
         'iris-tint': '#EAE7FF',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        inter: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         caption: ['12px', { lineHeight: '1.25' }],
