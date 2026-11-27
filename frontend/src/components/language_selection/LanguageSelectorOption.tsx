@@ -1,7 +1,7 @@
 import { Bookmark } from "@untitledui/icons"
 import LanguageCodeBox from "@/src/components/LanguageCodeBox";
 import * as FlagIcons from "@untitledui/country-flags";
-
+import { LanguageIdentity } from "@/src/utils/local_storage/favourite_languages";
 
 const countries_region = new Intl.DisplayNames(['en'], {
     type: 'region'
@@ -21,7 +21,7 @@ export default function LanguageSelection({
 }: { 
     languageCode: string;
     countryCode: string|null|undefined;
-    onSelect: (languageCode: string, countryCode: string|null|undefined) => void;
+    onSelect: (language: LanguageIdentity) => void;
     onAddToFavourites: (languageCode: string, countryCode: string|null|undefined) => void;
     isFavourite: boolean;        
 }) {
@@ -42,7 +42,7 @@ export default function LanguageSelection({
     return <>
         <div className={` ${bg} p-[8px] rounded-[8px] flex w-full flex-row items-between justify-between select-none hover:cursor-pointer hover:bg-saffron/10 transition-[background-color] duration-200`}
             onClick={() => {
-                onSelect(languageCode, countryCode)
+                onSelect({ languageCode, countryCode })
             }}
         >
             {/* Left part  */}

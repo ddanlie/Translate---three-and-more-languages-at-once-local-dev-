@@ -1,11 +1,14 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { LanguageIdentity } from "@/src/utils/local_storage/favourite_languages";
+import { use_service_translate_aiTranslate_async_getSupportedLanguages } from "@/src/services/translate/queries";
+import * as useQueryConfigPatterns from "@/src/utils/api/use_query_config_patterns.ts";
 
 import { 
     addFavouriteLanguage,
     removeFavouriteLanguage,
     getFavouriteLanguages,
     type FavouriteLanguage
-} from "@/src/utils/local_storage";
+} from "@/src/utils/local_storage/favourite_languages";
 
 import LanguageSelectorOption from "./LanguageSelectorOption";
 import SearchBar from "@/src/components/SearchBar";
@@ -14,6 +17,7 @@ import { XClose } from "@untitledui/icons/XClose";
 const languageKey = (languageCode: string, countryCode: string|null|undefined) =>
     `${languageCode}-${countryCode || ""}`;
 
+// Duplication from favourite_languages.tsx - lets reduce local storage access
 const isFavourite = (
     favourites: FavouriteLanguage[],
     languageCode: string,
@@ -23,14 +27,19 @@ const isFavourite = (
 );
 
 export default function LanguageSelection({
-    supportedLanguages,
+    //supportedLanguages,
     onSelect,
     onClose,
 }: { 
-    onSelect: (languageCode: string, countryCode: string|null|undefined) => void;
+    onSelect: (language: LanguageIdentity) => void;
     onClose: () => void;
-    supportedLanguages: Array<{ languageCode: string; countryCode: string|null|undefined;}>;
+    //supportedLanguages: Array<{ languageCode: string; countryCode: string|null|undefined;}>;
 }) {
+
+    const { data: supportedLanguages } = use_service_translate_aiTranslate_async_getSupportedLanguages(
+        { config: useQueryConfigPatterns.manual_mummy_cache30min_notry }
+    );
+
     const [favourites, setFavourites] = useState<FavouriteLanguage[]>(getFavouriteLanguages);
 
     const itemRefs = useRef(new Map<string, HTMLDivElement>());
@@ -182,7 +191,7 @@ export default function LanguageSelection({
                     <LanguageSelectorOption
                         languageCode={language.languageCode}
                         countryCode={language.countryCode}
-                        onSelect={onSelect}
+                        onSelect={(language: LanguageIdentity) => onSelect(language)}
                         onAddToFavourites={toggleFavourite}
                         isFavourite={isFavourite(favourites, language.languageCode, language.countryCode)}
                     />

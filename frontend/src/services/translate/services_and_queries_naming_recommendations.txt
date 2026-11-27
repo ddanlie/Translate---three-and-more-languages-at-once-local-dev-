@@ -12,3 +12,13 @@ Examples:
 - service_catalog_only-available-items_async_behavior-is-not-written-here
 
 - service_user_make-score-zero_sync_this-is-repeating-task-not-general-crud-operation
+
+
+
+
+
+Here is how you can name your query/mutation (useQuery/useMutation)
+
+use_qery_<full service name>
+
+use_mutation_<full service name>

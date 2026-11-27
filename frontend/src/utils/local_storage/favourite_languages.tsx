@@ -1,6 +1,6 @@
-type LanguageIdentity = {
+export type LanguageIdentity = {
   languageCode: string;
-  countryCode: string;
+  countryCode: string | null | undefined;
 };
 
 export type FavouriteLanguage = LanguageIdentity & {
@@ -86,3 +86,5 @@ export const isFavouriteLanguage = (
   getFavouriteLanguages().some((item) =>
     isSameLanguage(item, { languageCode, countryCode })
   );
+
+

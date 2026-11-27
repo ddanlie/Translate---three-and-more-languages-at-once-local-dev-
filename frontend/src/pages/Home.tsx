@@ -109,6 +109,8 @@ import {
 // }
 import TranslationsRow from "@/src/components/translation_row";
 import LanguageSelection from "@/src/components/language_selection";
+import SelectableTextArea from "@/src/components/SelectableTextArea";
+import QuickActivitiesPanel from "@/src/components/QuickActivitiesPanel";
 
 // import {  } from "@untitledui/icons"
 
@@ -192,6 +194,15 @@ export default function Home() {
         onClose={() => {
           console.log("Language selection closed");
         }}
-      />
+    />
+    <QuickActivitiesPanel />
+    
+    <SelectableTextArea
+      fontSize="3em"
+      text="This is a sample text with some words that can be selected."
+      onWordSelect={(word) => {
+        console.log("Selected word:", word);
+      }}
+    />
   </>
 }

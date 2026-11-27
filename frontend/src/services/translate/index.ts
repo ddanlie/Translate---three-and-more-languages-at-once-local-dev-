@@ -12,11 +12,17 @@ import {
 //Template:
 //service_<serviceGroup>_<specificBehavior>_<sync/async>_<additionalInfo>
 
-export const service_translate_aiTranslate_async_translateTextToManylanguages = async (text: string, sourceLanguage: string, targetLanguages: Array<string>): Promise<Array<string>> => {
+export interface TranslateTextToManyLanguagesBody {
+    text: string;
+    sourceLanguage: string;
+    targetLanguages: Array<string>;
+}
+
+export const service_translate_aiTranslate_async_translateTextToManylanguages = async (body: TranslateTextToManyLanguagesBody): Promise<Array<string>> => {
     const requestBody = {
-        text,
-        source_language: sourceLanguage,
-        target_languages: targetLanguages
+        text: body.text,
+        source_language: body.sourceLanguage,
+        target_languages: body.targetLanguages
     };
     return postData<Array<string>>(
         '/api/translate/ai_translate',
