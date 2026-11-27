@@ -8,6 +8,8 @@ import {
 } from "@/src/utils/local_storage";
 
 import LanguageSelectorOption from "./LanguageSelectorOption";
+import SearchBar from "@/src/components/SearchBar";
+import { XClose } from "@untitledui/icons/XClose";
 
 const languageKey = (languageCode: string, countryCode: string|null|undefined) =>
     `${languageCode}-${countryCode || ""}`;
@@ -23,8 +25,10 @@ const isFavourite = (
 export default function LanguageSelection({
     supportedLanguages,
     onSelect,
+    onClose,
 }: { 
     onSelect: (languageCode: string, countryCode: string|null|undefined) => void;
+    onClose: () => void;
     supportedLanguages: Array<{ languageCode: string; countryCode: string|null|undefined;}>;
 }) {
     const [favourites, setFavourites] = useState<FavouriteLanguage[]>(getFavouriteLanguages);
@@ -108,18 +112,63 @@ export default function LanguageSelection({
         }).finished.then(clearLayer, clearLayer);
     }, [favourites]);
 
+
+    const [searchTerm, setSearchTerm] = useState<string>("");
+
+    const countries_region = new Intl.DisplayNames(['en'], { type: 'region' });
+    const countries_language = new Intl.DisplayNames(['en'], { type: 'language' });
+
+    const filteredLanguages = sortedLanguages.filter((language) => {
+        const term = searchTerm.trim().toLowerCase();
+        if (!term) return true;
+
+        const languageName = countries_language.of(language.languageCode?.toUpperCase())?.toLowerCase() ?? "";
+        const regionName = language.countryCode
+            ? countries_region.of(language.countryCode?.toUpperCase())?.toLowerCase() ?? ""
+            : "";
+        const languageCode = language.languageCode?.toLowerCase() ?? "";
+        const countryCode = language.countryCode?.toLowerCase() ?? "";
+
+        return (
+            languageName.includes(term) ||
+            regionName.includes(term) ||
+            languageCode.includes(term) ||
+            countryCode.includes(term)
+        );
+    });
+
+    
+
     return <>
 
-        <div>
+        <div className="flex flex-col gap-[20px] w-full border-2 rounded-[20px] p-[20px]">
+
+            <div className="flex flex-row items-baseline justify-between">
+                <p className="text-ui-text text-slate font-bold mr-[1%]">Language Selection</p>    
+                <div className="flex items-center justify-center text-center rounded-[24px] p-[16px] bg-saffron/10 hover:bg-saffron/20 transition-[background-color] duration-200"
+
+                    onClick={() => {
+                        onClose();
+                    }}
+                >
+                    <XClose size={20} />
+                </div>
+            </div>
+            {/* search bar */}
+            <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+            />
+
             {/* Title */}
             <div className="mb-[10px] flex flex-row items-baseline">
                 <p className="text-ui-text text-slate font-bold mr-[1%]">All Languages</p>
-                <p className="text-caption text-slate font-normal">{sortedLanguages.length} available</p>
+                <p className="text-caption text-slate font-normal">{filteredLanguages.length} available</p>
             </div>
 
             {/* Language list */}
             <div className="columns-[300px] gap-[20px] w-full">
-            {sortedLanguages.map((language) => {
+            {filteredLanguages.map((language) => {
                 const key = languageKey(language.languageCode, language.countryCode);
                 return (
                 <div

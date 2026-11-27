@@ -26,6 +26,8 @@ export default function LanguageSelection({
     isFavourite: boolean;        
 }) {
 
+
+
     const LanguageFlag = countryCode ? FlagIcons[`Flag${countryCode.charAt(0).toUpperCase() + countryCode.slice(1).toLowerCase()}` as keyof typeof FlagIcons] : null;
 
     const languageCodeBoxBg = isFavourite ? "bg-iris/30" : "bg-linen/30";
@@ -38,7 +40,7 @@ export default function LanguageSelection({
         : "transition-[fill] duration-200 group-hover:fill-[#71748A80]";
 
     return <>
-        <div className={` ${bg} p-[8px] rounded-[8px] flex w-full flex-row items-between justify-between select-none hover:cursor-pointer hover:bg-slate/10 transition-[background-color] duration-200`}
+        <div className={` ${bg} p-[8px] rounded-[8px] flex w-full flex-row items-between justify-between select-none hover:cursor-pointer hover:bg-saffron/10 transition-[background-color] duration-200`}
             onClick={() => {
                 onSelect(languageCode, countryCode)
             }}

@@ -168,7 +168,7 @@ export default function Home() {
           { languageCode: "pt", countryCode: "pt" },
           { languageCode: "ja", countryCode: "jp" },
           { languageCode: "zh", countryCode: "cn" },
-          { languageCode: "ko", countryCode: "kr" },
+          { languageCode: "ko", countryCode: "" },
           { languageCode: "ru", countryCode: "ru" },
           { languageCode: "ar", countryCode: "sa" },
           { languageCode: "hi", countryCode: "in" },
@@ -176,7 +176,7 @@ export default function Home() {
           { languageCode: "pa", countryCode: "pk" },
           { languageCode: "ur", countryCode: "pk" },
           { languageCode: "fa", countryCode: "ir" },
-          { languageCode: "tr", countryCode: "tr" },
+          { languageCode: "tr", countryCode: "" },
           { languageCode: "vi", countryCode: "vn" },
           { languageCode: "th", countryCode: "th" },
           { languageCode: "id", countryCode: "id" },
@@ -188,6 +188,9 @@ export default function Home() {
         ]}
         onSelect={(languageCode, countryCode) => {
           console.log("Selected language:", languageCode, countryCode);
+        }}
+        onClose={() => {
+          console.log("Language selection closed");
         }}
       />
   </>
