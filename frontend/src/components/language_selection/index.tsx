@@ -27,21 +27,29 @@ const isFavourite = (
 );
 
 export default function LanguageSelection({
-    //supportedLanguages,
+    supportedLanguagesList=[],
     onSelect,
     onClose,
 }: { 
+    supportedLanguagesList: LanguageIdentity[];
     onSelect: (language: LanguageIdentity) => void;
     onClose: () => void;
     //supportedLanguages: Array<{ languageCode: string; countryCode: string|null|undefined;}>;
 }) {
 
-    const { data: supportedLanguages } = use_service_translate_aiTranslate_async_getSupportedLanguages(
+    // Supported languages: manual OR fetched from api
+    const { data: fetchedSupportedLanguages } = use_service_translate_aiTranslate_async_getSupportedLanguages(
         { config: useQueryConfigPatterns.manual_mummy_cache30min_notry }
     );
+    const supportedLanguages: LanguageIdentity[] =
+        supportedLanguagesList != undefined
+            ? supportedLanguagesList
+            : (Array.isArray(fetchedSupportedLanguages) ? fetchedSupportedLanguages : []);
 
     const [favourites, setFavourites] = useState<FavouriteLanguage[]>(getFavouriteLanguages);
 
+
+    // Animation stuff
     const itemRefs = useRef(new Map<string, HTMLDivElement>());
     const pendingFrom = useRef<{ key: string; rect: DOMRect } | null>(null);
 
@@ -121,7 +129,8 @@ export default function LanguageSelection({
         }).finished.then(clearLayer, clearLayer);
     }, [favourites]);
 
-
+    
+    // Search bar and filtering
     const [searchTerm, setSearchTerm] = useState<string>("");
 
     const countries_region = new Intl.DisplayNames(['en'], { type: 'region' });

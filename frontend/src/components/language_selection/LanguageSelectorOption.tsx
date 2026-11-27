@@ -18,7 +18,7 @@ export default function LanguageSelection({
     onSelect, 
     onAddToFavourites,
     isFavourite
-}: { 
+}: {
     languageCode: string;
     countryCode: string|null|undefined;
     onSelect: (language: LanguageIdentity) => void;

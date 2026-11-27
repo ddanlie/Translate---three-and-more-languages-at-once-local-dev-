@@ -4,6 +4,8 @@ import {
   service_translate_aiTranslate_async_translateTextToManylanguages,
 } from "@/src/services/translate";
 
+import { LanguageIdentity } from "@/src/utils/local_storage/favourite_languages";
+
 // export default function Home() {
 //   const [languages, setLanguages] = useState<Record<string, string>>({});
 //   const [text, setText] = useState("Hello, how are you?");
@@ -188,15 +190,15 @@ export default function Home() {
           { languageCode: "am", countryCode: "et" },
           { languageCode: "ha", countryCode: "ng" },
         ]}
-        onSelect={(languageCode, countryCode) => {
-          console.log("Selected language:", languageCode, countryCode);
+        onSelect={(languageCode: LanguageIdentity) => {
+          console.log("Selected language:", languageCode);
         }}
         onClose={() => {
           console.log("Language selection closed");
         }}
     />
     <QuickActivitiesPanel />
-    
+
     <SelectableTextArea
       fontSize="3em"
       text="This is a sample text with some words that can be selected."
